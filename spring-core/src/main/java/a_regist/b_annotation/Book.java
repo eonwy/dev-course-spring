@@ -1,4 +1,4 @@
-package a_regist.a_xml;
+package a_regist.b_annotation;
 
 public class Book {
 
@@ -15,6 +15,8 @@ public class Book {
         this.author = author;
         this.publisher = publisher;
         this.page = page;
+
+        System.out.println("매개변수가 있는 생성자 호출");
     }
 
     public String getTitle() {
