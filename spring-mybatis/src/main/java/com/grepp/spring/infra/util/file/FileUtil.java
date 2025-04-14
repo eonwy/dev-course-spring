@@ -34,12 +34,12 @@ public class FileUtil {
     }
 
     private void uploadFile(MultipartFile file, FileDto fileDto) throws IOException {
-        File path = new File(fileDto.savePath());
+        File path = new File(filePath + fileDto.savePath());
         if(!path.exists()){
             path.mkdirs();
         }
 
-        File target = new File(fileDto.savePath() + fileDto.renameFileName());
+        File target = new File(filePath + fileDto.savePath() + fileDto.renameFileName());
         file.transferTo(target);
     }
 
@@ -50,7 +50,7 @@ public class FileUtil {
 
     private String createSavePath(String depth) {
         LocalDate now = LocalDate.now();
-        return filePath + depth + "/" +
+        return depth + "/" +
             now.getYear() + "/" +
             now.getMonth() + "/" +
             now.getDayOfMonth() + "/";

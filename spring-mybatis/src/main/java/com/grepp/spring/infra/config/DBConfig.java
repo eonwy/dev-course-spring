@@ -8,13 +8,17 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
+@Order(1)
+@EnableTransactionManagement
 public class DBConfig {
 
     @Value("${spring.datasource.url}")
@@ -39,14 +43,13 @@ public class DBConfig {
     private String data;
 
     @Bean
-    DataSource dataSource() {
+    public DataSource dataSource() {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(url);
-        config.setUsername(username);
         config.setDriverClassName(driver);
+        config.setUsername(username);
         config.setPassword(password);
         config.setMaximumPoolSize(poolSize);
-
         return new HikariDataSource(config);
     }
 
@@ -56,8 +59,8 @@ public class DBConfig {
     }
 
     @Bean
-    public DataSourceTransactionManager transactionManager(DataSource dataSource) {
-        return new DataSourceTransactionManager(dataSource);
+    public DataSourceTransactionManager transactionManager() {
+        return new DataSourceTransactionManager(dataSource());
     }
 
     @Bean
@@ -73,12 +76,12 @@ public class DBConfig {
 
     @Bean
     public DataSourceInitializer databasePopulatorInitializer(
-        DataSource dataSource,
-        ResourceDatabasePopulator databasePopulator
-    ) {
+        DataSource dataSource, ResourceDatabasePopulator databasePopulator) {
         DataSourceInitializer initializer = new DataSourceInitializer();
         initializer.setDataSource(dataSource);
         initializer.setDatabasePopulator(databasePopulator);
         return initializer;
     }
+
+
 }
