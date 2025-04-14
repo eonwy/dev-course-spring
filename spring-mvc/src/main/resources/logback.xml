@@ -15,7 +15,7 @@
     TRACE > DEBUG > INFO > WARN > ERROR > OFF
     설정한 로깅레벨 이상의 심각도를 지닌 로그 메시지만 출력
   -->
-  <root level="INFO">
+  <root level="DEBUG">
     <appender-ref ref="CONSOLE"/>
   </root>
 
@@ -23,7 +23,4 @@
     <appender-ref ref="CONSOLE"/>
   </logger>
 
-  <logger name="org.apache.ibatis.logging.jdbc.PreparedStatementLogger" level="INFO" additivity="false">
-    <appender-ref ref="CONSOLE"/>
-  </logger>
 </configuration>
