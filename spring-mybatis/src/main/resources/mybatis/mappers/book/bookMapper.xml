@@ -10,6 +10,23 @@
 -->
 <mapper namespace="com.grepp.spring.app.model.book.BookRepository">
 
+  <resultMap id="bookMap" type="Book">
+    <id property="bkIdx" column="bk_idx"/>
+    <collection property="images" column="bk_idx" ofType="BookImg" select="selectImg" />
+  </resultMap>
+
+  <select id="selectAll" resultMap="bookMap">
+    select * from book
+  </select>
+
+  <select id="selectPaged" resultMap="bookMap">
+    select * from book order by created_at desc limit #{start}, #{offset}
+  </select>
+
+  <select id="selectImg" parameterType="int" resultType="BookImg">
+    select * from book_img where bk_idx = #{bkIdx}
+  </select>
+
   <select id="recentRentBook">
     select * from book b
     join rent_book rb using(bk_idx)
@@ -30,7 +47,7 @@
       and info like concat('%', #{keyword}, '%')
     </if>
     order by created_at desc
-    limit 5;
+    limit 5
   </select>
 
   <select id="selectByChooseWhen">
@@ -43,23 +60,23 @@
       <when test="search == 'author'">
         and author like concat('%', #{keyword}, '%')
       </when>
-      <when test="search == 'info'">
+      <otherwise>
         and info like concat('%', #{keyword}, '%')
-      </when>
+      </otherwise>
     </choose>
     order by created_at desc
-    limit 5;
+    limit 5
   </select>
 
   <!--
-   NOTE 02 : dynamic query
-   매개변수가 List 인 경우, {list=books}
-   -->
+    NOTE 02 : dynamic query
+    매개변수가 List 인 경우, {list=books}
+  -->
   <insert id="bulkInsert">
     insert into book(category, title, author, info)
     values
     <foreach collection="list" item="book" separator=",">
-      (#{book.category}, #{book.title},  #{book.author}, #{book.info})
+      (#{book.category}, #{book.title}, #{book.author}, #{book.info})
     </foreach>
   </insert>
 
@@ -79,4 +96,5 @@
       </foreach>
     </where>
   </select>
+
 </mapper>
