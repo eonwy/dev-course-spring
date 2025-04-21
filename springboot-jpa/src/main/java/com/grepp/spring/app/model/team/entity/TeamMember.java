@@ -18,7 +18,6 @@ import lombok.ToString;
 @Setter
 @ToString
 public class TeamMember extends BaseEntity {
-
     @Id
     @GeneratedValue
     private Long id;

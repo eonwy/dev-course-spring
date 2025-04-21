@@ -1,6 +1,5 @@
 package com.grepp.spring.infra.entity;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
@@ -11,15 +10,14 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public class BaseEntity {
-
+    
     protected Boolean activated;
-
+    
     @CreatedDate
     protected LocalDateTime createdAt = LocalDateTime.now();
-
     @LastModifiedDate
     protected LocalDateTime modifiedAt = LocalDateTime.now();
-
+    
     public void unActivated(){
         this.activated = false;
     }

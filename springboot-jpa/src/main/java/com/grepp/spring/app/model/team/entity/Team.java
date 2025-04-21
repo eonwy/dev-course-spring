@@ -15,15 +15,17 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Getter @Setter @ToString
+@Getter
+@Setter
+@ToString
 public class Team extends BaseEntity {
-
+    
     @Id
     @GeneratedValue
     private Long id;
     private String name;
-
+    
     @OneToMany(cascade = CascadeType.PERSIST)
-    @JoinColumn(name="teamId")
-    private List<TeamMember> members;
+    @JoinColumn(name = "teamId")
+    private List<TeamMember> member;
 }

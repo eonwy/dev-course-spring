@@ -1,31 +1,24 @@
-package com.grepp.spring.app.model.book.entity;
+package com.grepp.spring.app.model.book.dto;
 import com.grepp.spring.app.model.book.code.BookImgType;
-import com.grepp.spring.infra.entity.BaseEntity;
 import com.grepp.spring.infra.util.file.FileDto;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import lombok.Getter;
+import java.time.LocalDateTime;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
-@Entity
-@Getter @Setter @ToString
+@Data
 @NoArgsConstructor
-public class BookImg extends BaseEntity {
-    @Id
-    @GeneratedValue
-    private Long id;
-    @Enumerated(EnumType.STRING)
+public class BookImg {
+    private Integer biIdx;
+    private Integer bkIdx;
     private BookImgType type;
     private String originFileName;
     private String renameFileName;
     private String savePath;
+    private LocalDateTime createdAt;
+    private Boolean activated;
     
-    public BookImg(BookImgType type, FileDto fileDto){
+    public BookImg(Integer bkIdx, BookImgType type, FileDto fileDto){
+        this.bkIdx = bkIdx;
         this.type = type;
         this.originFileName = fileDto.originFileName();
         this.renameFileName = fileDto.renameFileName();

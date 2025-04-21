@@ -1,5 +1,6 @@
 package com.grepp.spring.infra.config;
 
+import com.grepp.spring.app.model.book.entity.QBook;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -10,12 +11,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @RequiredArgsConstructor
 public class DBConfig {
-
+    
     @PersistenceContext
     private final EntityManager entityManager;
-
+    
     @Bean
-    public JPAQueryFactory jpaQueryFactory() {
+    public JPAQueryFactory jpaQueryFactory(){
         return new JPAQueryFactory(entityManager);
     }
 }

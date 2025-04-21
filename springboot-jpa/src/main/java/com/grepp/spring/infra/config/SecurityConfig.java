@@ -30,16 +30,16 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
-
+    
     @Value("${remember-me.key}")
     private String rememberMeKey;
-
+    
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
-            .build();
+                   .build();
     }
-
+    
     @Bean
     public AuthenticationSuccessHandler successHandler(){
         return new AuthenticationSuccessHandler() {
@@ -47,33 +47,33 @@ public class SecurityConfig {
             public void onAuthenticationSuccess(HttpServletRequest request,
                 HttpServletResponse response, Authentication authentication)
                 throws IOException, ServletException {
-
+                
                 boolean isAdmin = authentication.getAuthorities()
-                    .stream()
-                    .anyMatch(authority ->
-                        authority.getAuthority().equals("ROLE_ADMIN"));
-
+                                      .stream()
+                                      .anyMatch(authority ->
+                                                    authority.getAuthority().equals("ROLE_ADMIN"));
+                
                 if(isAdmin){
                     response.sendRedirect("/admin");
                     return;
                 }
-
+                
                 response.sendRedirect("/");
             }
         };
     }
-
+    
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(
                 (requests) -> requests
-                    .anyRequest().permitAll()
+                                  .anyRequest().permitAll()
             )
             .logout(LogoutConfigurer::permitAll);
         return http.build();
     }
-
+    
     @Bean
     public UserDetailsService userDetailsService() {
         UserDetails user =
@@ -82,12 +82,12 @@ public class SecurityConfig {
                 .password("password")
                 .roles("USER")
                 .build();
-
+        
         return new InMemoryUserDetailsManager(user);
     }
-
-
-
+    
+    
+    
     @Bean
     public PasswordEncoder passwordEncoder(){
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();

@@ -1,6 +1,5 @@
 package com.grepp.spring.app.model.book.dto;
 
-import com.grepp.spring.app.model.book.entity.BookImg;
 import com.grepp.spring.app.model.book.code.Category;
 import java.time.LocalDateTime;
 import java.util.List;

@@ -5,8 +5,6 @@ insert into book(id,author,amount,category,title,rent_cnt)values(1003,'비트겐
 insert into book(id,author,amount,category,title,rent_cnt)values(1004,'황정은','7','NOVEL','디디의우산',10);
 insert into book(id,author,amount,category,title,rent_cnt)values(1005,'test','7','NOVEL','test',10);
 
-
-
 insert into member(user_id,email,role,password,tel) values('jpa','jpa@jpa.com','ROLE_USER','1234','010-0112-0119');
 insert into member(user_id,email,role,password,tel) values('security','security@security.com','ROLE_ADMIN','1234','010-0112-0120');
 insert into member(user_id,email,role,password,tel) values('boot','boot@boot.com','ROLE_USER','1234','010-0112-0121');

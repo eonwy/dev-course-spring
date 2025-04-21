@@ -16,7 +16,6 @@ import lombok.ToString;
 @Entity
 @Getter @Setter @ToString
 public class Rent extends BaseEntity {
-
     @Id
     @GeneratedValue
     private Long id;
@@ -24,6 +23,7 @@ public class Rent extends BaseEntity {
     private Boolean isReturn;
     private String title;
     private Integer rentBookCnt;
+    
     @OneToMany
     @JoinColumn(name = "rentId")
     private List<RentBook> rentBooks;

@@ -16,9 +16,10 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Getter @Setter @ToString
+@Getter
+@Setter
+@ToString
 public class RentHistory extends BaseEntity {
-
     @Id
     @GeneratedValue
     private Long id;

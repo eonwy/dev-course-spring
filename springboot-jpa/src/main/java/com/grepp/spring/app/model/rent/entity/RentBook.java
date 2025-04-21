@@ -19,7 +19,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class RentBook extends BaseEntity {
-
+    
     @Id
     @GeneratedValue
     private Long id;
