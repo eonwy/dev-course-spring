@@ -18,3 +18,4 @@ springboot-jpa/src/test/java/com/grepp/spring/.DS_Store
 springboot-thymeleaf/.DS_Store
 .DS_Store
 springboot-boilerplate/src/main/resources/application.properties
+*.properties
