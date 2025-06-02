@@ -1,7 +1,8 @@
 package com.grepp.spring.infra.auth.token;
 
-import com.grepp.spring.app.model.auth.RefreshTokenRepository;
+import com.grepp.spring.app.model.auth.token.RefreshTokenRepository;
 import com.grepp.spring.app.model.auth.domain.Principal;
+import com.grepp.spring.app.model.auth.token.dto.AccessTokenDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -9,11 +10,14 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.crypto.SecretKey;
 import lombok.Getter;
@@ -21,9 +25,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -32,6 +38,7 @@ import org.springframework.stereotype.Service;
 public class JwtProvider {
     
     private RefreshTokenRepository refreshTokenRepository;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
     
     @Value("${jwt.secrete}")
     private String key;
@@ -54,19 +61,27 @@ public class JwtProvider {
         return secretKey;
     }
     
-    public String generateAccessToken(Authentication authentication){
+    public AccessTokenDto generateAccessToken(Authentication authentication){
         String authorities = authentication.getAuthorities().stream()
                                  .map(GrantedAuthority::getAuthority)
                                  .collect(Collectors.joining(","));
         
+        String id = UUID.randomUUID().toString();
         long now = new Date().getTime();
         Date atExpiresIn = new Date(now + atExpiration);
-        return Jwts.builder()
+        String accessToken = Jwts.builder()
                    .subject(authentication.getName())
-                   .claim("auth",authorities)
+                   .id(id)
+                   .claim("auth", authorities)
                    .expiration(atExpiresIn)
                    .signWith(getSecretKey())
                    .compact();
+        
+        return AccessTokenDto.builder()
+                   .id(id)
+                   .token(accessToken)
+                   .expiresIn(atExpiration)
+                   .build();
     }
     
     public Authentication genreateAuthentication(String accessToken){
@@ -80,7 +95,7 @@ public class JwtProvider {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
     
-    private Claims parseClaim(String accessToken) {
+    public Claims parseClaim(String accessToken) {
         try{
             return Jwts.parser().verifyWith(getSecretKey()).build()
                        .parseSignedClaims(accessToken).getPayload();
@@ -99,4 +114,23 @@ public class JwtProvider {
         }
         return false;
     }
+    
+    public String resolveToken(HttpServletRequest request, TokenType tokenType) {
+        String headerToken = request.getHeader("Authorization");
+        if (headerToken != null && headerToken.startsWith("Bearer")) {
+            return headerToken.substring(7);
+        }
+        
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return null;
+        }
+        
+        return Arrays.stream(cookies)
+                   .filter(e -> e.getName().equals(tokenType.name()))
+                   .map(Cookie::getValue).findFirst()
+                   .orElse(null);
+    }
+    
+
 }
