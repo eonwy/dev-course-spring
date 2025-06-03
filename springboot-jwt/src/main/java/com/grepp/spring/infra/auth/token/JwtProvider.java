@@ -3,6 +3,7 @@ package com.grepp.spring.infra.auth.token;
 import com.grepp.spring.app.model.auth.token.RefreshTokenRepository;
 import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.auth.token.dto.AccessTokenDto;
+import com.grepp.spring.infra.auth.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -30,6 +31,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -39,6 +41,7 @@ public class JwtProvider {
     
     private RefreshTokenRepository refreshTokenRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final UserDetailsServiceImpl userDetailsService;
     
     @Value("${jwt.secrete}")
     private String key;
@@ -62,20 +65,19 @@ public class JwtProvider {
     }
     
     public AccessTokenDto generateAccessToken(Authentication authentication){
-        String authorities = authentication.getAuthorities().stream()
-                                 .map(GrantedAuthority::getAuthority)
-                                 .collect(Collectors.joining(","));
-        
+        return generateAccessToken(authentication.getName());
+    }
+    
+    public AccessTokenDto generateAccessToken(String username){
         String id = UUID.randomUUID().toString();
         long now = new Date().getTime();
         Date atExpiresIn = new Date(now + atExpiration);
         String accessToken = Jwts.builder()
-                   .subject(authentication.getName())
-                   .id(id)
-                   .claim("auth", authorities)
-                   .expiration(atExpiresIn)
-                   .signWith(getSecretKey())
-                   .compact();
+                                 .subject(username)
+                                 .id(id)
+                                 .expiration(atExpiresIn)
+                                 .signWith(getSecretKey())
+                                 .compact();
         
         return AccessTokenDto.builder()
                    .id(id)
@@ -86,11 +88,7 @@ public class JwtProvider {
     
     public Authentication genreateAuthentication(String accessToken){
         Claims claims = parseClaim(accessToken);
-        List<? extends GrantedAuthority> authorities =
-            Arrays.stream(claims.get("auth").toString().split(","))
-                .map(SimpleGrantedAuthority::new)
-                .toList();
-        
+        List<? extends GrantedAuthority> authorities = userDetailsService.findAuthorities(claims.getSubject());
         Principal principal = new Principal(claims.getSubject(),"", authorities);
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
