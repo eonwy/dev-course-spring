@@ -47,18 +47,16 @@ class SecurityConfig {
     @Order(1)
     @Throws(Exception::class)
     fun authorizationServerSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        val authorizationServerConfigurer =
-            OAuth2AuthorizationServerConfigurer.authorizationServer()
+        val authorizationServerConfigurer = OAuth2AuthorizationServerConfigurer.authorizationServer()
 
-        http
-            .cors { it.configurationSource(corsConfigurationSource()) }
+        http.cors{it.configurationSource(corsConfigurationSource())}
             .securityMatcher(authorizationServerConfigurer.endpointsMatcher)
             .with<OAuth2AuthorizationServerConfigurer>(
                 authorizationServerConfigurer
             ) { authorizationServer: OAuth2AuthorizationServerConfigurer ->
                 authorizationServer
                     .oidc(Customizer.withDefaults())
-            } // Enable OpenID Connect 1.0
+            }
 
             .authorizeHttpRequests(
                 Customizer { it.anyRequest().authenticated() }
@@ -74,44 +72,19 @@ class SecurityConfig {
     }
 
     @Bean
-    fun corsConfigurationSource():CorsConfigurationSource{
-        val corsConfig = CorsConfiguration()
-        corsConfig.setAllowedOriginPatterns(listOf(
-            "http://localhost:8080"
-        ))
-
-        corsConfig.allowedMethods = listOf("GET","POST")
-        corsConfig.allowedHeaders = listOf("*")
-        corsConfig.allowCredentials = true
-
-        val source = UrlBasedCorsConfigurationSource()
-        source.registerCorsConfiguration("/**", corsConfig)
-        return source
-    }
-
-    @Bean
     @Order(2)
     @Throws(Exception::class)
     fun defaultSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
+            .cors{it.configurationSource(corsConfigurationSource())}
             .authorizeHttpRequests(
                 Customizer {
                     it.anyRequest().authenticated()
                 }
             )
-            .formLogin(Customizer.withDefaults())
+            .formLogin(){it.defaultSuccessUrl("http://localhost:8080")}
+
         return http.build()
-    }
-
-    @Bean
-    fun userDetailsService(): UserDetailsService {
-        val userDetails: UserDetails = User.withDefaultPasswordEncoder()
-            .username("test")
-            .password("123qwe!@#")
-            .roles("USER")
-            .build()
-
-        return InMemoryUserDetailsManager(userDetails)
     }
 
     @Bean
@@ -154,6 +127,22 @@ class SecurityConfig {
         return AuthorizationServerSettings.builder().build()
     }
 
+    @Bean
+    fun corsConfigurationSource(): CorsConfigurationSource {
+        val corsConfig = CorsConfiguration()
+        corsConfig.setAllowedOriginPatterns(
+            listOf(
+                "http://localhost:8080"
+            )
+        )
+        corsConfig.allowedMethods = mutableListOf("GET", "POST")
+        corsConfig.allowedHeaders = listOf("*")
+        corsConfig.allowCredentials = true
+        val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", corsConfig)
+        return source
+    }
+
     companion object {
         private fun generateRsaKey(): KeyPair {
             val keyPair: KeyPair
@@ -167,15 +156,4 @@ class SecurityConfig {
             return keyPair
         }
     }
-
-
-
-
-
-
-
-
-
-
-
 }
