@@ -19,3 +19,5 @@ springboot-thymeleaf/.DS_Store
 .DS_Store
 springboot-boilerplate/src/main/resources/application.properties
 *.properties
+grepp-auth/src/main/resources/application.yml
+grepp-gateway/src/main/resources/application.yml
