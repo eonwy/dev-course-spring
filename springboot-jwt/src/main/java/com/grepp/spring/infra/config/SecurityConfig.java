@@ -40,14 +40,14 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
-
+    
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthExceptionFilter authExceptionFilter;
     private final JwtAuthenticationEntryPoint entryPoint;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2FailureHandler oAuth2FailureHandler;
     private final LogoutFilter logoutFilter;
-
+    
     @Bean
     public AuthenticationSuccessHandler successHandler(){
         return new AuthenticationSuccessHandler() {
@@ -55,25 +55,25 @@ public class SecurityConfig {
             public void onAuthenticationSuccess(HttpServletRequest request,
                 HttpServletResponse response, Authentication authentication)
                 throws IOException, ServletException {
-
+                
                 boolean isAdmin = authentication.getAuthorities()
-                    .stream()
-                    .anyMatch(authority ->
-                        authority.getAuthority().equals("ROLE_ADMIN"));
-
+                                      .stream()
+                                      .anyMatch(authority ->
+                                                    authority.getAuthority().equals("ROLE_ADMIN"));
+                
                 if(isAdmin){
                     response.sendRedirect("/admin");
                     return;
                 }
-
+                
                 response.sendRedirect("/");
             }
         };
     }
-
+    
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
+        
         // * : 1depth 아래 모든 경로
         // ** : 모든 depth 의 모든 경로
         // Security Config 에는 인증과 관련된 설정만 지정 (PermitAll or Authenticated)
@@ -83,49 +83,49 @@ public class SecurityConfig {
             .formLogin(AbstractHttpConfigurer::disable)
             .httpBasic(AbstractHttpConfigurer::disable)
             .oauth2Login(oauth ->
-                oauth.successHandler(oAuth2SuccessHandler)
-                    .failureHandler(oAuth2FailureHandler)
-
+                             oauth.successHandler(oAuth2SuccessHandler)
+                                 .failureHandler(oAuth2FailureHandler)
+                            
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(
                 (requests) -> requests
-                    .requestMatchers(GET, "/", "/error", "/favicon.ico", "/css/**", "/img/**","/js/**","/download/**").permitAll()
-                    .requestMatchers(GET, "/book/list").permitAll()
-                    .requestMatchers(GET, "/api/book/list", "/api/member/exists/*", "/api/ai/**").permitAll()
-                    .requestMatchers(GET, "/member/signup", "/member/signup/*", "/member/signin").permitAll()
-                    .requestMatchers(POST, "/member/signin", "/member/signup", "/member/verify").permitAll()
-                    .requestMatchers(POST, "/auth/signin").permitAll()
-                    .anyRequest().authenticated()
+                                  .requestMatchers(GET, "/", "/error", "/favicon.ico", "/css/**", "/img/**","/js/**","/download/**").permitAll()
+                                  .requestMatchers(GET, "/book/list").permitAll()
+                                  .requestMatchers(GET, "/api/book/list", "/api/member/exists/*", "/api/ai/**").permitAll()
+                                  .requestMatchers(GET, "/member/signup", "/member/signup/*", "/member/signin").permitAll()
+                                  .requestMatchers(POST, "/member/signin", "/member/signup", "/member/verify").permitAll()
+                                  .requestMatchers(POST, "/auth/signin").permitAll()
+                                  .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(logoutFilter, JwtAuthenticationFilter.class)
             .addFilterBefore(authExceptionFilter, JwtAuthenticationFilter.class);
         return http.build();
     }
-
+    
     @Bean
     public PasswordEncoder passwordEncoder(){
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
-
+    
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
-            .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+                            .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
-
+    
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfig = new CorsConfiguration();
         corsConfig.setAllowedOriginPatterns(Collections.singletonList(
             "http://localhost:8081"
         ));
-
+        
         corsConfig.setAllowedMethods(Arrays.asList("GET", "POST"));
         corsConfig.setAllowedHeaders(Collections.singletonList("*"));
         corsConfig.setAllowCredentials(true);
-
+        
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfig);
         return source;

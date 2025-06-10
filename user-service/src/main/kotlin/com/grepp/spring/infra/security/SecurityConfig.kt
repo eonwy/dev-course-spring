@@ -38,24 +38,24 @@ class SecurityConfig(
             }
             .authorizeHttpRequests(
                 Customizer{it.requestMatchers(
-                    HttpMethod.GET,
-                    "/",
-                    "/error",
-                    "/favicon.ico",
-                    "/css/**",
-                    "/img/**",
-                    "/js/**",
-                    "/download/**"
-                ).permitAll()
-                    .requestMatchers(
-                        "/member/signup",
-                        "/member/signup/*",
-                        "/member/signin"
-                    ).permitAll()
-                    .requestMatchers(
-                        HttpMethod.POST,"/member/verify"
-                    ).permitAll()
-                    .anyRequest().authenticated()
+                            HttpMethod.GET,
+                            "/",
+                            "/error",
+                            "/favicon.ico",
+                            "/css/**",
+                            "/img/**",
+                            "/js/**",
+                            "/download/**"
+                        ).permitAll()
+                        .requestMatchers(
+                            "/member/signup",
+                            "/member/signup/*",
+                            "/member/signin"
+                        ).permitAll()
+                        .requestMatchers(
+                            HttpMethod.POST,"/member/verify"
+                        ).permitAll()
+                        .anyRequest().authenticated()
                 }
             )
             .addFilterBefore(internalAuthFilter, UsernamePasswordAuthenticationFilter::class.java)

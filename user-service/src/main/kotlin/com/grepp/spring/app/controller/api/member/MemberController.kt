@@ -25,8 +25,8 @@ class MemberController(
     fun signup(
         @PathVariable
         token:String,
-        session: HttpSession
-    ) :ResponseEntity<ApiResponse<Unit>>{
+        session:HttpSession
+    ):ResponseEntity<ApiResponse<Unit>>{
         val request = session.getAttribute(token) as SignupRequest
         memberService.signup(request)
         return ResponseEntity.ok(ApiResponse.noContent())
@@ -47,8 +47,7 @@ class MemberController(
     @GetMapping("exists/{id}")
     fun checkDuplicated(
         @PathVariable
-        id:String
-    ):ResponseEntity<ApiResponse<Boolean>>{
+        id:String):ResponseEntity<ApiResponse<Boolean>>{
         return ResponseEntity.ok(ApiResponse.success(memberService.checkId(id)))
     }
 

@@ -10,5 +10,5 @@ data class OutboxDto(
     val createdAt: LocalDateTime,
     val modifiedAt: LocalDateTime,
     val activated: Boolean
-) {
+    ) {
 }

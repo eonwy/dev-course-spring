@@ -52,14 +52,6 @@ class SecurityConfig(
                             "/js/**",
                             "/download/**"
                         ).permitAll()
-                        .requestMatchers(
-                            "/member/signup",
-                            "/member/signup/*",
-                            "/member/signin"
-                        ).permitAll()
-                        .requestMatchers(
-                            HttpMethod.POST,"/member/verify"
-                        ).permitAll()
                         .anyRequest().authenticated()
                 }
             )
@@ -72,8 +64,8 @@ class SecurityConfig(
         val user: UserDetails =
             User.withDefaultPasswordEncoder()
                 .username("mail-service")
-                .password("adsfjaweifjaeijfaiejfaef")
-                .roles("USER")
+                .password("asdjkalsdeoiasdljkhasdfjalksfd")
+                .roles("SERVER")
                 .build()
 
         return InMemoryUserDetailsManager(user)

@@ -18,10 +18,10 @@ import org.thymeleaf.context.Context;
 @Setter
 @EnableAsync
 public class MailTemplate {
-
+    
     private final JavaMailSender javaMailSender;
     private final TemplateEngine templateEngine;
-
+    
     @Async
     public void send(SmtpDto dto){
         javaMailSender.send(mimeMessage -> {
@@ -31,7 +31,7 @@ public class MailTemplate {
             mimeMessage.setText(render(dto), "UTF-8", "html");
         });
     }
-
+    
     private String render(SmtpDto dto){
         Context context = new Context();
         context.setVariables(dto.getProperties());

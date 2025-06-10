@@ -18,8 +18,7 @@ class UserDetailsServiceImpl(
 
     override fun loadUserByUsername(username: String): UserDetails {
         val member: Member = memberRepository.findById(username)
-                                .orElseThrow(){UsernameNotFoundException(username)}
-        println("🔍 member.role.name = ${member.role.name}")
+            .orElseThrow(){UsernameNotFoundException(username)}
         return Principal.createPrincipal(
             member,
             listOf(SimpleGrantedAuthority(member.role.name))

@@ -10,18 +10,18 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/mail")
+@RequestMapping("mail")
 @PreAuthorize("hasRole('SERVER')")
 class MailController(
-    private val mailService: MailService
+    private val mailService:MailService
 ) {
 
     @PostMapping("send")
     fun send(
         @RequestBody
         @Valid
-        request: SmtpRequest
-    ) {
+        request:SmtpRequest
+    ){
         mailService.send(request)
     }
 }

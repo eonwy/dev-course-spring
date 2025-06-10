@@ -8,5 +8,7 @@ data class MemberInfoDto(
     val modifyDate: LocalDateTime,
     val leaveDate: LocalDateTime,
     val rentableDate: LocalDateTime
-) {
+
+){
+
 }
