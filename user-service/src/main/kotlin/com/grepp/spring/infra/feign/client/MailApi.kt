@@ -7,10 +7,9 @@ import org.springframework.web.bind.annotation.RequestHeader
 
 @FeignClient(
     name = "mail-service",
-    url = "http://localhost:8080/mail/"
 )
 interface MailApi {
-    @PostMapping("send")
+    @PostMapping("/mail/send")
     fun sendMail(
         @RequestHeader(name="x-member-id")
         userId:String = "user-service",

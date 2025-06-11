@@ -7,6 +7,7 @@ plugins {
 
 group = "com.grepp"
 version = "0.0.1-SNAPSHOT"
+extra["springCloudVersion"] = "2025.0.0"
 
 java {
     toolchain {
@@ -32,6 +33,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
 
@@ -49,6 +51,12 @@ dependencies {
 kotlin {
     compilerOptions {
         freeCompilerArgs.addAll("-Xjsr305=strict")
+    }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
     }
 }
 

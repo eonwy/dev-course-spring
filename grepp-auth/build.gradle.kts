@@ -9,6 +9,7 @@ plugins {
 
 group = "com.grepp"
 version = "0.0.1-SNAPSHOT"
+extra["springCloudVersion"] = "2025.0.0"
 
 java {
     toolchain {
@@ -38,6 +39,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.modelmapper:modelmapper:3.2.2")
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     implementation("io.jsonwebtoken:jjwt-jackson:0.12.6")
@@ -68,6 +70,13 @@ allOpen {
     annotation("jakarta.persistence.MappedSuperclass")
     annotation("jakarta.persistence.Embeddable")
 }
+
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
+    }
+}
+
 
 tasks.withType<Test> {
     useJUnitPlatform()

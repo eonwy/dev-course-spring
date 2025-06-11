@@ -21,3 +21,5 @@ springboot-boilerplate/src/main/resources/application.properties
 *.properties
 grepp-auth/src/main/resources/application.yml
 grepp-gateway/src/main/resources/application.yml
+grepp-discovery/gradle
+grepp-mail/src/main/resources/application.yml
